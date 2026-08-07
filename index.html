@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exclusief VIP Platform</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #ec4899;
+      --accent-hover: #db2777;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --danger: #ef4444;
+      --border: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .user-status {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .badge-sub { background-color: rgba(236, 72, 153, 0.2); color: var(--accent); }
+    .badge-free { background-color: rgba(239, 68, 68, 0.2); color: var(--danger); }
+
+    main {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    .banner {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .banner h1 { font-size: 1.75rem; margin-bottom: 0.5rem; color: var(--accent); }
+    .banner p { color: var(--text-muted); }
+
+    .btn {
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.2s ease;
+    }
+
+    .btn:hover { background-color: var(--accent-hover); }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+    .btn-outline:hover { background: var(--border); }
+
+    .nav-tabs {
+      display: flex;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .video-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .media-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .locked-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(4px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .lock-icon { font-size: 2.5rem; }
+
+    .card-body {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      flex: 1;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .price {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Appointment & Admin Section Styling */
+    .appointment-container {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: var(--bg-color);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-main);
+      font-size: 1rem;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">🔥 SecretStudio</div>
+    <div class="user-status">
+      <span id="subBadge" class="badge badge-free">Gratis Gebruiker</span>
+      <button id="toggleSubBtn" class="btn btn-outline">Abonneren </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="banner">
+      <div>
+        <h1>Welkom bij Mijn Exclusieve Wereld</h1>
+        <p>Neem een abonnement voor volledige toegang. Ontgrendel privévideo's voor mijn meest intieme beelden.</p>
+      </div>
+    </section>
+
+    <div class="nav-tabs">
+      <button class="tab-btn active" id="tabVideosBtn">Privévideo's (PPV)</button>
+      <button class="tab-btn" id="tabApptBtn">Privé Afspraak Maken</button>
+      <button class="tab-btn" id="tabAdminBtn">🔑 Admin Panel</button>
+    </div>
+
+    <!-- PAGE 1: VIDEOS GALLERY -->
+    <div id="videoGrid" class="video-grid"></div>
+
+    <!-- PAGE 2: APPOINTMENT FORM -->
+    <div id="appointmentPage" class="appointment-container hidden">
+      <h2 style="margin-bottom: 0.5rem; color: var(--accent);">Boek een Privé Afspraak</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Vul het onderstaande formulier in om een persoonlijke VIP-afspraak aan te vragen. Je verzoek wordt rechtstreeks verzonden.</p>
+
+      <form action="https://formsubmit.co/priveonlyfan@gmail.com" method="POST">
+        <input type="hidden" name="_subject" value="Nieuwe VIP Afspraakaanvraag!">
+        <input type="hidden" name="_captcha" value="false">
+
+        <div class="form-group">
+          <label for="name">Jouw Naam</label>
+          <input type="text" id="name" name="Naam" placeholder="Vul je naam in" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">E-mailadres</label>
+          <input type="email" id="email" name="Email" placeholder="jouwnaam@gmail.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="date">Gewenste Datum & Tijd</label>
+          <input type="datetime-local" id="date" name="Datum_en_Tijd" required>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Speciale Verzoeken / Bericht</label>
+          <textarea id="message" name="Bericht" rows="5" placeholder="Vertel me wat je in gedachten hebt voor onze afspraak..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn" style="width: 100%; padding: 0.8rem;">Verstuur Afspraakaanvraag</button>
+      </form>
+    </div>
+
+    <!-- PAGE 3: MANUAL UNLOCK ADMIN PANEL -->
+    <div id="adminPage" class="appointment-container hidden">
+      <h2 style="margin-bottom: 0.5rem; color: var(--accent);">Beheerderspaneel (Admin)</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Handmatige vrijgave van video's en abonnementen na betaling.</p>
+
+      <div class="form-group">
+        <label for="adminPin">Admin PIN</label>
+        <input type="password" id="adminPin" placeholder="Voer PIN in (standaard: 0000)">
+      </div>
+      
+      <button class="btn" id="loginAdminBtn" style="width: 100%; margin-bottom: 1.5rem;">Inloggen als Admin</button>
+
+      <div id="adminControls" class="hidden" style="border-top: 1px solid var(--border); padding-top: 1.5rem;">
+        <h3 style="margin-bottom: 1rem;">Gebruiker Status Aanpassen</h3>
+        
+        <button class="btn" id="adminToggleSub" style="margin-bottom: 1.5rem; width: 100%;">
+          Abonnement Status: Direct Inschakelen
+        </button>
+
+        <h4 style="margin-bottom: 0.75rem;">Privévideo's Handmatig Vrijgeven:</h4>
+        <div id="adminVideoList" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ==========================================
+    // 1. STATE MANAGEMENT & INDIVIDUAL PAYMENT LINKS
+    // ==========================================
+    const ADMIN_PIN = "0852"; // Multi-purpose passcode to unlock admin access
+
+    const currentUser = {
+      id: "usr_101",
+      isSubscribed: false,
+      purchasedVideoIds: []
+    };
+
+    // Subscription Payment Link
+    const SUBSCRIPTION_PAYMENT_LINK = "https://dundle.com/nl/transcash/";
+
+    // Unique Video Database with separate payment links per video
+    const videoDatabase = [
+      {
+        id: "vid_01",
+        title: "🔥 Sensuele Slaapkamer Geheimen",
+        description: "Een intieme blik achter gesloten deuren. Alleen voor jouw ogen bestemd...",
+        price: 19.99,
+        paymentLink: "https://dundle.com/nl/transcash/", 
+        videoUrl: "video1.mp4"
+      },
+      {
+        id: "vid_02",
+        title: "💋 Verleidelijke Douche Sessie",
+        description: "Het wordt erhg heet en nat in deze exclusieve onthullende video.",
+        price: 49.99,
+        paymentLink: "https://dundle.com/nl/transcash/", 
+        videoUrl: "video2.mp4"
+      },
+      {
+        id: "vid_03",
+        title: "😈 Stoute Nachtelijke Fantasieën",
+        description: "Laat je meeslepen door mijn meest meedogenloze en stoute passies.",
+        price: 99.99,
+        paymentLink: "https://dundle.com/nl/transcash/", 
+        videoUrl: "video3.mp4"
+      }
+    ];
+
+    // ==========================================
+    // 2. STREAM SIMULATION
+    // ==========================================
+    function requestVideoStream(videoId, user) {
+      if (!user.isSubscribed) {
+        return { status: 403, error: "Abonnement vereist." };
+      }
+      
+      const isPurchased = user.purchasedVideoIds.includes(videoId);
+      if (!isPurchased) {
+        return { status: 403, error: "PPV aankoop vereist." };
+      }
+
+      const videoData = videoDatabase.find(v => v.id === videoId);
+      const streamUrl = createGeneratedVideoStreamUrl(videoData.title, videoData.color);
+
+      return { status: 200, streamUrl: streamUrl };
+    }
+
+    function createGeneratedVideoStreamUrl(text, color) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 640;
+      canvas.height = 360;
+      const ctx = canvas.getContext("2d");
+      
+      const stream = canvas.captureStream(30);
+      const recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+      const chunks = [];
+      
+      recorder.ondataavailable = e => chunks.push(e.data);
+      recorder.start();
+
+      let frame = 0;
+      const interval = setInterval(() => {
+        ctx.fillStyle = "#0f172a";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(320 + Math.sin(frame * 0.05) * 100, 180, 40, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 22px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(text, 320, 260);
+        ctx.font = "16px sans-serif";
+        ctx.fillText("Beschermde Stream Actief", 320, 290);
+        
+        frame++;
+        if (frame > 90) {
+          clearInterval(interval);
+          recorder.stop();
+        }
+      }, 1000 / 30);
+
+      return new Promise(resolve => {
+        recorder.onstop = () => {
+          const blob = new Blob(chunks, { type: "video/webm" });
+          resolve(URL.createObjectURL(blob));
+        };
+      });
+    }
+
+    // ==========================================
+    // 3. UI RENDERING & TAB NAVIGATION
+    // ==========================================
+    const videoGrid = document.getElementById("videoGrid");
+    const appointmentPage = document.getElementById("appointmentPage");
+    const adminPage = document.getElementById("adminPage");
+    const toggleSubBtn = document.getElementById("toggleSubBtn");
+    const subBadge = document.getElementById("subBadge");
+
+    const tabVideosBtn = document.getElementById("tabVideosBtn");
+    const tabApptBtn = document.getElementById("tabApptBtn");
+    const tabAdminBtn = document.getElementById("tabAdminBtn");
+
+    tabVideosBtn.addEventListener("click", () => {
+      tabVideosBtn.classList.add("active");
+      tabApptBtn.classList.remove("active");
+      tabAdminBtn.classList.remove("active");
+
+      videoGrid.classList.remove("hidden");
+      appointmentPage.classList.add("hidden");
+      adminPage.classList.add("hidden");
+    });
+
+    tabApptBtn.addEventListener("click", () => {
+      tabApptBtn.classList.add("active");
+      tabVideosBtn.classList.remove("active");
+      tabAdminBtn.classList.remove("active");
+
+      appointmentPage.classList.remove("hidden");
+      videoGrid.classList.add("hidden");
+      adminPage.classList.add("hidden");
+    });
+
+    tabAdminBtn.addEventListener("click", () => {
+      tabAdminBtn.classList.add("active");
+      tabVideosBtn.classList.remove("active");
+      tabApptBtn.classList.remove("active");
+
+      adminPage.classList.remove("hidden");
+      videoGrid.classList.add("hidden");
+      appointmentPage.classList.add("hidden");
+    });
+
+    async function renderApp() {
+      if (currentUser.isSubscribed) {
+        subBadge.textContent = "VIP Abonneer";
+        subBadge.className = "badge badge-sub";
+        toggleSubBtn.textContent = "Abonnement Opzeggen";
+      } else {
+        subBadge.textContent = "Gratis Gebruiker";
+        subBadge.className = "badge badge-free";
+        toggleSubBtn.textContent = "Abonneren (€ 9,99/mnd)";
+      }
+
+      videoGrid.innerHTML = "";
+
+      for (const video of videoDatabase) {
+        const isUnlocked = currentUser.purchasedVideoIds.includes(video.id);
+        const card = document.createElement("div");
+        card.className = "video-card";
+
+        let mediaContent = "";
+
+        if (!currentUser.isSubscribed) {
+          mediaContent = `
+            <div class="media-container">
+              <div class="locked-overlay">
+                <span class="lock-icon">🔒</span>
+                <p>Word lid om exclusieve video's te bekijken</p>
+                <button class="btn" onclick="openPaymentLink('${SUBSCRIPTION_PAYMENT_LINK}')">Nu Abonneren</button>
+              </div>
+            </div>
+          `;
+        } else if (!isUnlocked) {
+          mediaContent = `
+            <div class="media-container">
+              <div class="locked-overlay">
+                <span class="lock-icon">💋</span>
+                <p>Privé Pay-Per-View Video</p>
+                <button class="btn" onclick="openPaymentLink('${video.paymentLink}')">Nu Betalen & Ontgrendelen (€ ${video.price.toFixed(2).replace('.', ',')})</button>
+              </div>
+            </div>
+          `;
+        } else {
+          const response = await requestVideoStream(video.id, currentUser);
+          mediaContent = `
+            <div class="media-container">
+              <video controls autoplay loop src="${response.streamUrl}"></video>
+            </div>
+          `;
+        }
+
+        card.innerHTML = `
+          ${mediaContent}
+          <div class="card-body">
+            <h3 class="card-title">${video.title}</h3>
+            <p class="card-desc">${video.description}</p>
+            <div class="card-footer">
+              <span class="price">€ ${video.price.toFixed(2).replace('.', ',')}</span>
+              <span style="font-size: 0.8rem; color: ${isUnlocked && currentUser.isSubscribed ? 'var(--success)' : 'var(--text-muted)'}">
+                ${isUnlocked && currentUser.isSubscribed ? '✓ Ontgrendeld' : 'Grendeld'}
+              </span>
+            </div>
+          </div>
+        `;
+
+        videoGrid.appendChild(card);
+      }
+    }
+
+    // Opens payment link in external tab
+    window.openPaymentLink = function(url) {
+      window.open(url, '_blank');
+    };
+
+    toggleSubBtn.addEventListener("click", () => {
+      if (!currentUser.isSubscribed) {
+        openPaymentLink(SUBSCRIPTION_PAYMENT_LINK);
+      } else {
+        currentUser.isSubscribed = false;
+        renderApp();
+      }
+    });
+
+    // ==========================================
+    // 4. MANUAL UNLOCK ADMIN LOGIC
+    // ==========================================
+    const adminPinInput = document.getElementById("adminPin");
+    const loginAdminBtn = document.getElementById("loginAdminBtn");
+    const adminControls = document.getElementById("adminControls");
+    const adminVideoList = document.getElementById("adminVideoList");
+    const adminToggleSub = document.getElementById("adminToggleSub");
+
+    loginAdminBtn.addEventListener("click", () => {
+      if (adminPinInput.value === ADMIN_PIN) {
+        adminControls.classList.remove("hidden");
+        renderAdminControls();
+      } else {
+        alert("Onjuiste Admin PIN Code!");
+      }
+    });
+
+    function renderAdminControls() {
+      adminToggleSub.textContent = currentUser.isSubscribed 
+        ? "Abonnement Status: VIP ACTIEF (Klik om te deactiveren)" 
+        : "Abonnement Status: INACTIEF (Klik om te activeren)";
+
+      adminVideoList.innerHTML = "";
+      videoDatabase.forEach(video => {
+        const isUnlocked = currentUser.purchasedVideoIds.includes(video.id);
+        const btn = document.createElement("button");
+        btn.className = "btn " + (isUnlocked ? "btn-outline" : "");
+        btn.style.textAlign = "left";
+        btn.textContent = isUnlocked 
+          ? `✓ ${video.title} (Ontgrendeld - Klik om weer te vergrendelen)` 
+          : `🔓 Handmatig Ontgrendelen: ${video.title}`;
+        
+        btn.onclick = () => {
+          if (isUnlocked) {
+            currentUser.purchasedVideoIds = currentUser.purchasedVideoIds.filter(id => id !== video.id);
+          } else {
+            currentUser.isSubscribed = true; // Auto-activate subscription if needed
+            currentUser.purchasedVideoIds.push(video.id);
+          }
+          renderAdminControls();
+          renderApp();
+        };
+
+        adminVideoList.appendChild(btn);
+      });
+    }
+
+    adminToggleSub.addEventListener("click", () => {
+      currentUser.isSubscribed = !currentUser.isSubscribed;
+      renderAdminControls();
+      renderApp();
+    });
+
+    renderApp();
+  </script>
+</body>
+</html>
